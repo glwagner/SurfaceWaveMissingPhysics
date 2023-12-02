@@ -11,8 +11,6 @@ Lx = 256
 Ly = Lx
 Lz = 128
 
-initial_mixed_layer_depth = 10 # m
-
 Jᵘ = -4e-5 # m² s⁻², surface kinematic momentum flux
 Jᵇ = 2e-8  # m² s⁻³, surface buoyancy flux
 N² = 2e-5  # s⁻², initial and bottom buoyancy gradient
@@ -22,6 +20,10 @@ a = 0.8 # m
 λ = 60  # m
 k = 2π / λ
 σ = sqrt(g * k) # s⁻¹
+
+# Some initial condition parameters
+initial_mixed_layer_depth = 10 # m
+noise_amplitude = 1e-2 # non-dimensional
 
 grid = RectilinearGrid(arch;
                        size = (Nx, Ny, Nz),
@@ -59,8 +61,8 @@ stratification(z) = z < - initial_mixed_layer_depth ? N² * z : N² * (-initial_
 bᵢ(x, y, z) = stratification(z) + 1e-1 * Ξ(z) * N² * model.grid.Lz
 
 u★ = sqrt(abs(Jᵘ))
-uᵢ(x, y, z) = u★ * 1e-1 * Ξ(z)
-wᵢ(x, y, z) = u★ * 1e-1 * Ξ(z)
+uᵢ(x, y, z) = u★ * noise_amplitude * Ξ(z)
+wᵢ(x, y, z) = u★ * noise_amplitude * Ξ(z)
 
 set!(model, u=uᵢ, w=wᵢ, b=bᵢ)
 
